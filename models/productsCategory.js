@@ -1,7 +1,7 @@
 var mongooes = require('mongoose');
 
-const productCategory = {
-    _id: Schema.Types.ObjectId,
+const productCategory = mongooes.Schema({
+    _id: mongooes.Types.ObjectId,
     cat_name: {
         type: String,
         require: true
@@ -11,6 +11,6 @@ const productCategory = {
         require: true
     }
 
-}
+})
 
 module.exports = mongooes.model('productCategory', productCategory);
