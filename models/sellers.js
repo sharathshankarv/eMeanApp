@@ -30,13 +30,40 @@ exports.addSeller = function(seller){
 
     return new Promise((resolve, reject)=>{
         newSeller.save()
-        .then(seller =>{
-            console.log("Seller Added Successfully in Model");
-            resolve(seller);
-        })
-        .catch(err => {
-            reject(seller);
-        })
+        .then(seller => resolve(seller))
+        .catch(err => reject(err))
     })
+}
+
+exports.getAllSellers = function(){    
+    return new Promise(function(resolve, reject){
+        sellerSchema.find({})
+        .then(sellerArr => resolve(sellerArr))
+        .catch(err => reject(err))
+    })    
+}
+
+exports.getSeller = function(id){
+    return new Promise((resolve, reject) =>{
+        sellerSchema.findById(id)
+        .then((seller)=> resolve(seller))
+        .catch(err => reject(err))
+    })
+}
+
+exports.deleteSellers = ()=>{
+    return new Promise((resolve, reject)=>{
+        sellerSchema.deleteMany()
+        .then(delResp => resolve(delResp))
+        .catch(err => reject(err))
+    });
+}
+
+exports.deleteSellerById = (id) => {    
+    return new Promise((resolve, reject) =>{
+        sellerSchema.deleteOne(id)
+        .then(delResp => resolve(delResp))
+        .catch(err => reject(err))
+    });
 }
 
