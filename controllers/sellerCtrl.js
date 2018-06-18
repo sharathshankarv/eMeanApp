@@ -76,4 +76,15 @@ exports.deleteSellerById = (req, res, next) =>{
         })
     })
 }
+
+exports.editSeller = (req, res, next) => {
+    var id = req.body._id;
+    var obj = req.body;
+    sellerModel.editeSellerById(id, obj)
+    .then( resp => res.send(resp))
+    .catch(err => res.send({
+        err: err,
+        status: 400
+    }));
+}
     

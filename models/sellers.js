@@ -61,9 +61,28 @@ exports.deleteSellers = ()=>{
 
 exports.deleteSellerById = (id) => {    
     return new Promise((resolve, reject) =>{
-        sellerSchema.deleteOne(id)
+        sellerSchema.findOneAndRemove(id)
         .then(delResp => resolve(delResp))
         .catch(err => reject(err))
+    });
+}
+
+exports.editeSellerById = (id, obj) =>{
+    return new Promise((resolve, reject) =>{
+        
+        console.log("upObj " + obj.name);
+        sellerSchema.findOneAndUpdate(
+            id, 
+            {name: obj.name, 
+             user_Rating: obj.user_Rating, 
+             email: obj.email
+            }, 
+            {new: true}, 
+            (err, result) =>{
+            if(err) reject(err);
+
+            resolve(result);
+        });
     });
 }
 
