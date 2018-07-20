@@ -1,4 +1,3 @@
-var mongoose = require('mongoose');
 var sellerModel = require('../models/sellers');
 
 /* add seller into DB*/
@@ -82,9 +81,16 @@ exports.editSeller = (req, res, next) => {
     var obj = req.body;
     sellerModel.editeSellerById(id, obj)
     .then( resp => res.send(resp))
-    .catch(err => res.send({
-        err: err,
-        status: 400
-    }));
+    .catch(err => {
+        if(err){
+            if(err.code === 11000)
+                res.send({
+                    status: 500,
+                    msg: 'email already exists'
+                });                
+
+            res.send(err);
+        }
+    });
 }
     

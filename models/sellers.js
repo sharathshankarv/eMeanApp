@@ -1,21 +1,20 @@
 var mongoose = require('mongoose');
 
-var sellersSchema = mongoose.Schema({
-    //_id: mongoose.Types.ObjectId,
+var sellersSchema = mongoose.Schema({    
     name: {
         type: String,
         require: true
-    },
-    user_Rating: {
-        type: Number,
-        require: false
-    },
+    },    
     email: {
         type: String,
         require: true,
         unique: true
+    },
+    user_Rating: {
+        type: Number,
+        require: false
     }
-})
+});
 
 var sellerSchema = mongoose.model('sellers', sellersSchema);
 
@@ -69,8 +68,6 @@ exports.deleteSellerById = (id) => {
 
 exports.editeSellerById = (id, obj) =>{
     return new Promise((resolve, reject) =>{
-        
-        console.log("upObj " + obj.name);
         sellerSchema.findOneAndUpdate(
             id, 
             {name: obj.name, 
