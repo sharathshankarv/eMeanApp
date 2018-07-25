@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 const JSON = require('circular-json');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 var UserModel = mongoose.Schema({    
     name: {
@@ -29,9 +31,9 @@ exports.User = userSchema;
 exports.signUp = (userObj) =>{
     let hash = bcrypt.hashSync(userObj.password, 10);    
     var newUser = new userSchema({
-        name: userObj.name,
+        name: userObj.name.toLowerCase(),
         password: hash,
-        email: userObj.email,
+        email: userObj.email.toLowerCase(),
         phone: userObj.phone
     });
 
@@ -50,16 +52,39 @@ exports.getAllUsers = function(){
     })
 }
 
-exports.signIn = (userObj) => {           
+exports.signIn = (userObj) => {
+    console.log("secret " + config.secret);           
     return new Promise((resolve, reject) => {
-        console.log(userObj.name);
-        userSchema.findOne({
-            $or: [
-                   { name : userObj.name },
-                   { birth: userObj.email }
-                 ]
-        })
-        .then(result => resolve(result))
-        .catch(err => reject(err));
+        if(userObj.password !== "" && userObj.hasOwnProperty("password")){        
+            userSchema.findOne(
+                {
+                $or: [                          
+                        { 'email' : userObj.email.toLowerCase()}
+                    ]
+            },{})
+            .then(result => {
+                bcrypt.compare(userObj.password, result.password, function(err, res) {
+                    if(err) reject(err);
+
+                    if(res){
+                        const payload = {
+                            id: result._id,
+                            email: result.email
+                        }
+                        var token = jwt.sign(payload, config.secret, {
+                            expiresIn: '1h' // expires in 1 hours
+                        });
+
+                        var resObj = { success: true, message: 'Enjoy your token!', token: token };
+                        resolve(resObj);
+                    }
+                });
+            })
+            .catch(err => reject(err));
+        }else{
+            reject({
+                "requiredErr":"Password Required"
+            });
+        }
     })
 }
